@@ -19,7 +19,10 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.17/tailwind.min.css">      
 	</head>
 	<body>
-        <p class="font-mono text-white text-md font-bold absolute bottom-0 right-0">Speed : <span class="speed">1</span></p>
+        <div class="absolute bottom-0 right-0 text-right">
+            <p class="font-mono text-white text-md font-bold">Speed : <span class="speed">1</span></p>
+            <p class="font-mono text-white text-md font-bold">Playing animation : <span class="anim">true</span></p>    
+        </div>
         <div id="dialog" title="Controls">
             <p>Right click and drag to move around<br/><br/>Left click and drag to change perspective<br/><br/>Scroll to zoom<br/><br/>Press <kbd>X</kbd> to stop animation and <kbd>SPACE</kbd> to play again<br/><br/>Press <kbd>a</kbd> to increase spreed and <kbd>d</kbd> to decrease spreed<br/></p>
         </div>          
@@ -159,18 +162,18 @@
         scene.add( nep );
 
         // Set camera position
-        camera.position.y = 10;
+        camera.position.y = 2;
         camera.position.x = -10;
         camera.position.z = -5;
 
         var t = 0
-        var c = 0.1
+        var c = 0.01
         var anim;
         const animate = function () {
             anim = requestAnimationFrame( animate );
 
             // Update position of planet
-            t > 243 ? t += c : t += (c * 100);
+            t > 135 ? t += c : t += (c * 1000);
 
             // Planet rotation
             sun.rotation.y += (0.001 / 27 * 100)
@@ -212,22 +215,38 @@
         };
         controls.update();
         animate();
-        document.querySelector(".speed").innerHTML = Math.trunc(c * 10) + ` (${4.5 / c / 10} second/year)`
+
+        const loadhash = () => {
+            if(!window.location.hash.split("#")[1]) return;
+            c = parseInt(window.location.hash.split("#")[1]) / 100
+            document.querySelector(".speed").innerHTML = Math.round(c * 100) + ` (${ 15.91 / c / 100 } second/Earth year)`
+        }
+        window.onload = () => {
+            loadhash()
+        }
+        window.onhashchange = () => {
+            loadhash()
+        }
+
+        document.querySelector(".speed").innerHTML = Math.round(c * 100) + ` (${ 15.91 / c / 100 } second/Earth year)`
         window.addEventListener("keypress", (e) => {
             switch(e.key) {
                 case " ": 
+                    document.querySelector(".anim").innerHTML = "true"
                     requestAnimationFrame( animate );
                     break;
                 case "x":
+                document.querySelector(".anim").innerHTML = "false"
                     cancelAnimationFrame( anim );
                     break;
                 case 'a':
-                    c = c + 0.1;
-                    document.querySelector(".speed").innerHTML = Math.trunc(c * 10) + ` (${4.5 / c / 10} second/year)`
+                    c = c + 0.01;
+                    document.querySelector(".speed").innerHTML = Math.round(c * 100) + ` (${ 15.91 / c / 100 } second/Earth year)`
                     break;
                 case 'd':
-                    c -= 0.1;
-                    document.querySelector(".speed").innerHTML = Math.trunc(c * 10) + ` (${4.5 / c / 10} second/year)`
+                    if(c <= 0) break;
+                    c -= 0.01;
+                    document.querySelector(".speed").innerHTML = Math.round(c * 100) + ` (${ 15.91 / c / 100 } second/Earth year)`
                     break;
             }
         })
