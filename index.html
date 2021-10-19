@@ -1,254 +1,333 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8">
+		<meta charset="utf-8" />
 		<title>Solar System</title>
 		<style>
-			body { margin: 0; }
-            html {
-                overflow-y: scroll;
-            }
-            ::-webkit-scrollbar {
-                width: 0;
-            }
+			body {
+				margin: 0;
+			}
+			html {
+				overflow-y: scroll;
+			}
+			::-webkit-scrollbar {
+				width: 0;
+			}
 		</style>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <link rel="stylesheet" href="/resources/demos/style.css">
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>  
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.17/tailwind.min.css">      
+		<link
+			rel="stylesheet"
+			href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+		/>
+		<link rel="stylesheet" href="/resources/demos/style.css" />
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.17/tailwind.min.css"
+		/>
 	</head>
 	<body>
-        <div class="absolute bottom-0 right-0 text-right">
-            <p class="font-mono text-white text-md font-bold">Speed : <span class="speed">1</span></p>
-            <p class="font-mono text-white text-md font-bold">Playing animation : <span class="anim">true</span></p>    
-        </div>
-        <div id="dialog" title="Controls">
-            <p>Right click and drag to move around<br/><br/>Left click and drag to change perspective<br/><br/>Scroll to zoom<br/><br/>Press <kbd>X</kbd> to stop animation and <kbd>SPACE</kbd> to play again<br/><br/>Press <kbd>a</kbd> to increase spreed and <kbd>d</kbd> to decrease spreed<br/></p>
-        </div>          
+		<div class="absolute bottom-0 right-0 text-right">
+			<p class="font-mono text-white text-md font-bold">
+				Speed : <span class="speed">1</span>
+			</p>
+			<p class="font-mono text-white text-md font-bold">
+				Playing animation : <span class="anim">true</span>
+			</p>
+		</div>
+		<div id="dialog" title="Controls">
+			<p>
+				Right click and drag to move around<br /><br />Left click and drag to
+				change perspective<br /><br />Scroll to zoom<br /><br />Press
+				<kbd>X</kbd> to stop animation and <kbd>SPACE</kbd> to play again<br /><br />Press
+				<kbd>a</kbd> to increase spreed and <kbd>d</kbd> to decrease spreed<br />
+			</p>
+		</div>
 	</body>
-    <script src="https://threejs.org/build/three.js"></script>
-    <script type="module">
+	<script src="https://threejs.org/build/three.js"></script>
+	<script type="module">
+		$(function () {
+			$('#dialog').dialog();
+		});
+		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(
+			75,
+			window.innerWidth / window.innerHeight,
+			0.1,
+			1000
+		);
 
-        $( function() {
-            $( "#dialog" ).dialog();
-        });
-        import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js"
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		const renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
 
-        const renderer = new THREE.WebGLRenderer();
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        document.body.appendChild( renderer.domElement );
+		// Texture
+		var SunTexture = new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/9/99/Map_of_the_full_sun.jpg'
+		);
+		var MerTexture = new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/9/92/Solarsystemscope_texture_2k_mercury.jpg'
+		);
+		var VenTexture = new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/1/1c/Solarsystemscope_texture_8k_venus_surface.jpg'
+		);
+		var EarTexture = new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/0/04/Solarsystemscope_texture_8k_earth_daymap.jpg'
+		);
+		var MarTexture = new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/7/70/Solarsystemscope_texture_8k_mars.jpg'
+		);
+		var JupTexture = new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/b/be/Solarsystemscope_texture_2k_jupiter.jpg'
+		);
+		var SatTexture = new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/1/1e/Solarsystemscope_texture_8k_saturn.jpg'
+		);
+		var UraTexture = new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Solarsystemscope_texture_2k_uranus.jpg/640px-Solarsystemscope_texture_2k_uranus.jpg'
+		);
+		var NepTexture = new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Solarsystemscope_texture_2k_neptune.jpg/640px-Solarsystemscope_texture_2k_neptune.jpg'
+		);
 
-        // Texture
-        var SunTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/9/99/Map_of_the_full_sun.jpg" );
-        var MerTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/9/92/Solarsystemscope_texture_2k_mercury.jpg" )
-        var VenTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/1/1c/Solarsystemscope_texture_8k_venus_surface.jpg" )
-        var EarTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/0/04/Solarsystemscope_texture_8k_earth_daymap.jpg" )
-        var MarTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/7/70/Solarsystemscope_texture_8k_mars.jpg" )
-        var JupTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/b/be/Solarsystemscope_texture_2k_jupiter.jpg" )
-        var SatTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/1/1e/Solarsystemscope_texture_8k_saturn.jpg" )
-        var UraTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Solarsystemscope_texture_2k_uranus.jpg/640px-Solarsystemscope_texture_2k_uranus.jpg" )
-        var NepTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Solarsystemscope_texture_2k_neptune.jpg/640px-Solarsystemscope_texture_2k_neptune.jpg" )
+		// Normal Map
+		var earMap = new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Solarsystemscope_texture_8k_earth_normal_map.tif/lossy-page1-1200px-Solarsystemscope_texture_8k_earth_normal_map.tif.jpg'
+		);
 
-        // Normal Map
-        var earMap = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Solarsystemscope_texture_8k_earth_normal_map.tif/lossy-page1-1200px-Solarsystemscope_texture_8k_earth_normal_map.tif.jpg" )
-    
-        // Set background image
-        new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/2/25/夜空_-_panoramio.jpg" , ( texture ) =>  {
-            scene.background = texture;  
-        });
-        
-        // Sun
-        const sunGeo = new THREE.SphereGeometry( 1, 128 );
-        const sunMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: SunTexture, emissiveMap: SunTexture, emissive: 0xffffff, reflectivity: 100 } );
-        const sunLight = new THREE.PointLight( 0xffffff, 1, 0 );
-        const controls = new OrbitControls(camera, renderer.domElement);
-        const sun = new THREE.Mesh( sunGeo, sunMat );
+		// Set background image
+		new THREE.TextureLoader().load(
+			'https://upload.wikimedia.org/wikipedia/commons/2/25/夜空_-_panoramio.jpg',
+			(texture) => {
+				scene.background = texture;
+			}
+		);
 
-        sun.position.y = 0;
-        sun.position.z = 0.2;
-        sun.position.x = 0;
+		// Sun
+		const sunGeo = new THREE.SphereGeometry(1, 128);
+		const sunMat = new THREE.MeshStandardMaterial({
+			color: 0xffffff,
+			map: SunTexture,
+			emissiveMap: SunTexture,
+			emissive: 0xffffff,
+			reflectivity: 100,
+		});
+		const sunLight = new THREE.PointLight(0xffffff, 1, 0);
+		const controls = new OrbitControls(camera, renderer.domElement);
+		const sun = new THREE.Mesh(sunGeo, sunMat);
 
-        scene.add( sun, sunLight );
+		sun.position.y = 0;
+		sun.position.z = 0.2;
+		sun.position.x = 0;
 
-        // Mercury
-        const merGeo = new THREE.SphereGeometry( 0.1, 128 );
-        const merMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: MerTexture } );
-        const mer = new THREE.Mesh( merGeo, merMat );
+		scene.add(sun, sunLight);
 
-        mer.position.y = 0;
-        mer.position.z = 3;
-        mer.position.x = -2;
+		// Mercury
+		const merGeo = new THREE.SphereGeometry(0.1, 128);
+		const merMat = new THREE.MeshStandardMaterial({
+			color: 0xffffff,
+			map: MerTexture,
+		});
+		const mer = new THREE.Mesh(merGeo, merMat);
 
-        scene.add( mer );
+		mer.position.y = 0;
+		mer.position.z = 3;
+		mer.position.x = -2;
 
-        // Venus
-        const venGeo = new THREE.SphereGeometry( 0.13, 128 );
-        const venMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: VenTexture } );
-        const ven = new THREE.Mesh( venGeo, venMat );
+		scene.add(mer);
 
-        ven.position.y = 0;
-        ven.position.z = 3;
-        ven.position.x = -3;
+		// Venus
+		const venGeo = new THREE.SphereGeometry(0.13, 128);
+		const venMat = new THREE.MeshStandardMaterial({
+			color: 0xffffff,
+			map: VenTexture,
+		});
+		const ven = new THREE.Mesh(venGeo, venMat);
 
-        scene.add( ven );
+		ven.position.y = 0;
+		ven.position.z = 3;
+		ven.position.x = -3;
 
-        // Earth
-        const earGeo = new THREE.SphereGeometry( 0.2, 128 );
-        const earMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: EarTexture, normalMap: earMap } );
-        const ear = new THREE.Mesh( earGeo, earMat );
+		scene.add(ven);
 
-        ear.position.y = 0;
-        ear.position.z = 3;
-        ear.position.x = -4;
+		// Earth
+		const earGeo = new THREE.SphereGeometry(0.2, 128);
+		const earMat = new THREE.MeshStandardMaterial({
+			color: 0xffffff,
+			map: EarTexture,
+			normalMap: earMap,
+		});
+		const ear = new THREE.Mesh(earGeo, earMat);
 
-        scene.add( ear );
+		ear.position.y = 0;
+		ear.position.z = 3;
+		ear.position.x = -4;
 
-        // Mars
-        const marGeo = new THREE.SphereGeometry( 0.1, 128 );
-        const marMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: MarTexture } );
-        const mar = new THREE.Mesh( marGeo, marMat );
+		scene.add(ear);
 
-        mar.position.y = 0;
-        mar.position.z = 3;
-        mar.position.x = -5;
+		// Mars
+		const marGeo = new THREE.SphereGeometry(0.1, 128);
+		const marMat = new THREE.MeshStandardMaterial({
+			color: 0xffffff,
+			map: MarTexture,
+		});
+		const mar = new THREE.Mesh(marGeo, marMat);
 
-        scene.add( mar );
+		mar.position.y = 0;
+		mar.position.z = 3;
+		mar.position.x = -5;
 
-        // Jupiter
-        const jupGeo = new THREE.SphereGeometry( 0.7, 128 );
-        const jupMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: JupTexture } );
-        const jup = new THREE.Mesh( jupGeo, jupMat );
+		scene.add(mar);
 
-        jup.position.y = 0;
-        jup.position.z = 3;
-        jup.position.x = -7;
+		// Jupiter
+		const jupGeo = new THREE.SphereGeometry(0.7, 128);
+		const jupMat = new THREE.MeshStandardMaterial({
+			color: 0xffffff,
+			map: JupTexture,
+		});
+		const jup = new THREE.Mesh(jupGeo, jupMat);
 
-        scene.add( jup );
+		jup.position.y = 0;
+		jup.position.z = 3;
+		jup.position.x = -7;
 
-        // Saturn
-        const satGeo = new THREE.SphereGeometry( 0.6, 128 );
-        const satMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: SatTexture } );
-        const sat = new THREE.Mesh( satGeo, satMat );
+		scene.add(jup);
 
-        sat.position.y = 0;
-        sat.position.z = 3;
-        sat.position.x = -10;
+		// Saturn
+		const satGeo = new THREE.SphereGeometry(0.6, 128);
+		const satMat = new THREE.MeshStandardMaterial({
+			color: 0xffffff,
+			map: SatTexture,
+		});
+		const sat = new THREE.Mesh(satGeo, satMat);
 
-        scene.add( sat );
+		sat.position.y = 0;
+		sat.position.z = 3;
+		sat.position.x = -10;
 
-        // Ur anus
-        const uraGeo = new THREE.SphereGeometry( 0.4, 128 );
-        const uraMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: UraTexture } );
-        const ura = new THREE.Mesh( uraGeo, uraMat );
+		scene.add(sat);
 
-        ura.position.y = 0;
-        ura.position.z = 3;
-        ura.position.x = -13;
+		// Ur anus
+		const uraGeo = new THREE.SphereGeometry(0.4, 128);
+		const uraMat = new THREE.MeshStandardMaterial({
+			color: 0xffffff,
+			map: UraTexture,
+		});
+		const ura = new THREE.Mesh(uraGeo, uraMat);
 
-        scene.add( ura );
+		ura.position.y = 0;
+		ura.position.z = 3;
+		ura.position.x = -13;
 
-        // Nep, nep
-        const nepGeo = new THREE.SphereGeometry( 0.4, 128 );
-        const nepMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: NepTexture } );
-        const nep = new THREE.Mesh( nepGeo, nepMat );
+		scene.add(ura);
 
-        nep.position.y = 0;
-        nep.position.z = 3;
-        nep.position.x = -16;
+		// Nep, nep
+		const nepGeo = new THREE.SphereGeometry(0.4, 128);
+		const nepMat = new THREE.MeshStandardMaterial({
+			color: 0xffffff,
+			map: NepTexture,
+		});
+		const nep = new THREE.Mesh(nepGeo, nepMat);
 
-        scene.add( nep );
+		nep.position.y = 0;
+		nep.position.z = 3;
+		nep.position.x = -16;
 
-        // Set camera position
-        camera.position.y = 2;
-        camera.position.x = -10;
-        camera.position.z = -5;
+		scene.add(nep);
 
-        var t = 0
-        var c = 0.01
-        var anim;
-        const animate = function () {
-            anim = requestAnimationFrame( animate );
+		// Set camera position
+		camera.position.y = 2;
+		camera.position.x = -10;
+		camera.position.z = -5;
 
-            // Update position of planet
-            t > 135 ? t += c : t += (c * 1000);
+		var t = 0;
+		var c = 0.01;
+		var anim;
+		const animate = function () {
+			anim = requestAnimationFrame(animate);
 
-            // Planet rotation
-            sun.rotation.y += (0.001 / 27 * 100)
-            mer.rotation.y += (0.001 / 58.65 * 100)
-            ven.rotation.y += (0.001 / 243 * 100)
-            ear.rotation.y += (0.001 / 1 * 100)
-            mar.rotation.y += (0.001 / 1.025 * 100)
-            jup.rotation.y += (0.001 / 0.4166 * 100)
-            sat.rotation.y += (0.001 / 0.4375 * 100)
-            ura.rotation.y += (0.001 / 0.7083 * 100)
-            nep.rotation.y += (0.001 / 0.6666 * 100)
+			// Update position of planet
+			t > 135 ? (t += c) : (t += c * 1000);
 
-            // Make it revolves around the sun
-            mer.position.z = 2 * Math.cos((t / 88) * 100) + 0;
-            mer.position.x = 2 * Math.sin((t / 88) * 100) + 0;
+			// Planet rotation
+			sun.rotation.y += (0.001 / 27) * 100;
+			mer.rotation.y += (0.001 / 58.65) * 100;
+			ven.rotation.y += (0.001 / 243) * 100;
+			ear.rotation.y += (0.001 / 1) * 100;
+			mar.rotation.y += (0.001 / 1.025) * 100;
+			jup.rotation.y += (0.001 / 0.4166) * 100;
+			sat.rotation.y += (0.001 / 0.4375) * 100;
+			ura.rotation.y += (0.001 / 0.7083) * 100;
+			nep.rotation.y += (0.001 / 0.6666) * 100;
 
-            ven.position.z = 3 * Math.cos((t / 224.7) * 100) + 0;
-            ven.position.x = 3 * Math.sin((t / 224.7) * 100) + 0;
+			// Make it revolves around the sun
+			mer.position.z = 2 * Math.cos((t / 88) * 100) + 0;
+			mer.position.x = 2 * Math.sin((t / 88) * 100) + 0;
 
-            ear.position.z = 4 * Math.cos((t / 365) * 100) + 0;
-            ear.position.x = 4 * Math.sin((t / 365) * 100) + 0;
+			ven.position.z = 3 * Math.cos((t / 224.7) * 100) + 0;
+			ven.position.x = 3 * Math.sin((t / 224.7) * 100) + 0;
 
-            mar.position.z = 5 * Math.cos((t / 687) * 100) + 0;
-            mar.position.x = 5 * Math.sin((t / 687) * 100) + 0;
+			ear.position.z = 4 * Math.cos((t / 365) * 100) + 0;
+			ear.position.x = 4 * Math.sin((t / 365) * 100) + 0;
 
-            jup.position.z = 7 * Math.cos((t / 4333) * 100) + 0;
-            jup.position.x = 7 * Math.sin((t / 4333) * 100) + 0;
+			mar.position.z = 5 * Math.cos((t / 687) * 100) + 0;
+			mar.position.x = 5 * Math.sin((t / 687) * 100) + 0;
 
-            sat.position.z = 10 * Math.cos((t / 10756) * 100) + 0;
-            sat.position.x = 10 * Math.sin((t / 10756) * 100) + 0;
+			jup.position.z = 7 * Math.cos((t / 4333) * 100) + 0;
+			jup.position.x = 7 * Math.sin((t / 4333) * 100) + 0;
 
-            ura.position.z = 13 * Math.cos((t / 30687) * 100) + 0;
-            ura.position.x = 13 * Math.sin((t / 30687) * 100) + 0;
+			sat.position.z = 10 * Math.cos((t / 10756) * 100) + 0;
+			sat.position.x = 10 * Math.sin((t / 10756) * 100) + 0;
 
-            nep.position.z = 16 * Math.cos((t / 60190) * 100) + 0;
-            nep.position.x = 16 * Math.sin((t / 60190) * 100) + 0;
+			ura.position.z = 13 * Math.cos((t / 30687) * 100) + 0;
+			ura.position.x = 13 * Math.sin((t / 30687) * 100) + 0;
 
-            renderer.render( scene, camera );
-        };
-        controls.update();
-        animate();
+			nep.position.z = 16 * Math.cos((t / 60190) * 100) + 0;
+			nep.position.x = 16 * Math.sin((t / 60190) * 100) + 0;
 
-        const loadhash = () => {
-            if(!window.location.hash.split("#")[1]) return;
-            c = parseInt(window.location.hash.split("#")[1]) / 100
-            document.querySelector(".speed").innerHTML = Math.round(c * 100) + ` (${ 15.91 / c / 100 } second/Earth year)`
-        }
-        window.onload = () => {
-            loadhash()
-        }
-        window.onhashchange = () => {
-            loadhash()
-        }
+			renderer.render(scene, camera);
+		};
+		controls.update();
+		animate();
 
-        document.querySelector(".speed").innerHTML = Math.round(c * 100) + ` (${ 15.91 / c / 100 } second/Earth year)`
-        window.addEventListener("keypress", (e) => {
-            switch(e.key) {
-                case " ": 
-                    document.querySelector(".anim").innerHTML = "true"
-                    requestAnimationFrame( animate );
-                    break;
-                case "x":
-                document.querySelector(".anim").innerHTML = "false"
-                    cancelAnimationFrame( anim );
-                    break;
-                case 'a':
-                    c = c + 0.01;
-                    document.querySelector(".speed").innerHTML = Math.round(c * 100) + ` (${ 15.91 / c / 100 } second/Earth year)`
-                    break;
-                case 'd':
-                    if(c <= 0) break;
-                    c -= 0.01;
-                    document.querySelector(".speed").innerHTML = Math.round(c * 100) + ` (${ 15.91 / c / 100 } second/Earth year)`
-                    break;
-            }
-        })
-    </script>
+		const loadhash = () => {
+			if (!window.location.hash.split('#')[1]) return;
+			c = parseInt(window.location.hash.split('#')[1]) / 100;
+			document.querySelector('.speed').innerHTML =
+				Math.round(c * 100) + ` (${15.91 / c / 100} second/Earth year)`;
+		};
+		window.onload = () => {
+			loadhash();
+		};
+		window.onhashchange = () => {
+			loadhash();
+		};
+
+		document.querySelector('.speed').innerHTML =
+			Math.round(c * 100) + ` (${15.91 / c / 100} second/Earth year)`;
+		window.addEventListener('keypress', (e) => {
+			switch (e.key) {
+				case ' ':
+					document.querySelector('.anim').innerHTML = 'true';
+					requestAnimationFrame(animate);
+					break;
+				case 'x':
+					document.querySelector('.anim').innerHTML = 'false';
+					cancelAnimationFrame(anim);
+					break;
+				case 'a':
+					c = c + 0.01;
+					document.querySelector('.speed').innerHTML =
+						Math.round(c * 100) + ` (${15.91 / c / 100} second/Earth year)`;
+					break;
+				case 'd':
+					if (c <= 0) break;
+					c -= 0.01;
+					document.querySelector('.speed').innerHTML =
+						Math.round(c * 100) + ` (${15.91 / c / 100} second/Earth year)`;
+					break;
+			}
+		});
+	</script>
 </html>
