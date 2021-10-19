@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Solar System</title>
+		<style>
+			body { margin: 0; }
+            html {
+                overflow-y: scroll;
+            }
+            ::-webkit-scrollbar {
+                width: 0;
+            }
+		</style>
+	</head>
+	<body>
+		<script src="https://threejs.org/build/three.js"></script>
+		<script type="module">
+            alert("Right click to move\nA-D to move left or right\nLeft click to change perspective\nScroll to zoom")
+            import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js"
+			const scene = new THREE.Scene();
+			const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+			const renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+            // Texture
+            var SunTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/c/cb/Solarsystemscope_texture_2k_sun.jpg" );
+            var MerTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/9/92/Solarsystemscope_texture_2k_mercury.jpg" )
+            var VenTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/1/1c/Solarsystemscope_texture_8k_venus_surface.jpg" )
+            var EarTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/0/04/Solarsystemscope_texture_8k_earth_daymap.jpg" )
+            var MarTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/7/70/Solarsystemscope_texture_8k_mars.jpg" )
+            var JupTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/b/be/Solarsystemscope_texture_2k_jupiter.jpg" )
+            var SatTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/1/1e/Solarsystemscope_texture_8k_saturn.jpg" )
+            var UraTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Solarsystemscope_texture_2k_uranus.jpg/640px-Solarsystemscope_texture_2k_uranus.jpg" )
+            var NepTexture = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Solarsystemscope_texture_2k_neptune.jpg/640px-Solarsystemscope_texture_2k_neptune.jpg" )
+
+            // Normal Map
+            var earMap = new THREE.TextureLoader().load( "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Solarsystemscope_texture_8k_earth_normal_map.tif/lossy-page1-1200px-Solarsystemscope_texture_8k_earth_normal_map.tif.jpg" )
+            // Sun
+            const sunGeo = new THREE.SphereGeometry( 1, 128 );
+			const sunMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: SunTexture } );
+            const sunLight = new THREE.AmbientLight( 0xffffff );
+            sunLight.position.y = 0;
+            sunLight.position.z = 0;
+            sunLight.position.x = 0;
+            const controls = new OrbitControls(camera, renderer.domElement);
+			const sun = new THREE.Mesh( sunGeo, sunMat );
+
+            sun.position.y = 0;
+            sun.position.z = 3;
+            sun.position.x = 0;
+
+			scene.add( sun, sunLight );
+
+            // Mercury
+            const merGeo = new THREE.SphereGeometry( 0.1, 128 );
+			const merMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: MerTexture } );
+			const mer = new THREE.Mesh( merGeo, merMat );
+
+            mer.position.y = 0;
+            mer.position.z = 3;
+            mer.position.x = -2;
+
+			scene.add( mer );
+
+            // Venus
+            const venGeo = new THREE.SphereGeometry( 0.13, 128 );
+			const venMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: VenTexture } );
+			const ven = new THREE.Mesh( venGeo, venMat );
+
+            ven.position.y = 0;
+            ven.position.z = 3;
+            ven.position.x = -3;
+
+			scene.add( ven );
+
+            // Earth
+            const earGeo = new THREE.SphereGeometry( 0.2, 128 );
+			const earMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: EarTexture, normalMap: earMap } );
+			const ear = new THREE.Mesh( earGeo, earMat );
+
+            ear.position.y = 0;
+            ear.position.z = 3;
+            ear.position.x = -4;
+
+			scene.add( ear );
+
+            // Mars
+            const marGeo = new THREE.SphereGeometry( 0.1, 128 );
+			const marMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: MarTexture } );
+			const mar = new THREE.Mesh( marGeo, marMat );
+
+            mar.position.y = 0;
+            mar.position.z = 3;
+            mar.position.x = -5;
+
+			scene.add( mar );
+
+            // Jupiter
+            const jupGeo = new THREE.SphereGeometry( 0.7, 128 );
+			const jupMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: JupTexture } );
+			const jup = new THREE.Mesh( jupGeo, jupMat );
+
+            jup.position.y = 0;
+            jup.position.z = 3;
+            jup.position.x = -7;
+
+			scene.add( jup );
+
+            // Saturn
+            const satGeo = new THREE.SphereGeometry( 0.6, 128 );
+			const satMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: SatTexture } );
+			const sat = new THREE.Mesh( satGeo, satMat );
+
+            sat.position.y = 0;
+            sat.position.z = 3;
+            sat.position.x = -10;
+
+			scene.add( sat );
+
+            // Ur anus
+            const uraGeo = new THREE.SphereGeometry( 0.4, 128 );
+			const uraMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: UraTexture } );
+			const ura = new THREE.Mesh( uraGeo, uraMat );
+
+            ura.position.y = 0;
+            ura.position.z = 3;
+            ura.position.x = -13;
+
+			scene.add( ura );
+
+            // Nep
+            const nepGeo = new THREE.SphereGeometry( 0.4, 128 );
+			const nepMat = new THREE.MeshStandardMaterial( { color: 0xffffff, map: NepTexture } );
+			const nep = new THREE.Mesh( nepGeo, nepMat );
+
+            nep.position.y = 0;
+            nep.position.z = 3;
+            nep.position.x = -16;
+
+			scene.add( nep );
+
+            // Set camera position
+            camera.position.z = 8;
+
+			const animate = function () {
+				requestAnimationFrame( animate );
+                controls.update();
+
+                sun.rotation.y += (0.001 / 27 * 100)
+                mer.rotation.y += (0.001 / 58.65 * 100)
+                ven.rotation.y += (0.001 / 243 * 100)
+                ear.rotation.y += (0.001 / 1 * 100)
+                mar.rotation.y += (0.001 / 1.025 * 100)
+                jup.rotation.y += (0.001 / 0.4166 * 100)
+                sat.rotation.y += (0.001 / 0.4375 * 100)
+                ura.rotation.y += (0.001 / 0.7083 * 100)
+                nep.rotation.y += (0.001 / 0.7083 * 100)
+
+				renderer.render( scene, camera );
+			};
+
+			animate();
+
+            var pgNow = window.pageYOffset;
+
+            window.addEventListener("scroll", () => { 
+                var st = window.pageYOffset
+                if (st > pgNow){
+                    camera.position.z -= 1;
+                } else {
+                    camera.position.z += 1;
+                }
+            });
+            window.addEventListener("keypress", (e) => { 
+                console.log(e)
+                if (e.key === 'a'){
+                    camera.position.x += 1
+                } else if(e.key === 'd') {
+                    camera.position.x -= 1
+                }
+            });
+		</script>
+	</body>
+</html>
