@@ -40,7 +40,8 @@
 				Right click and drag to move around<br /><br />Left click and drag to
 				change perspective<br /><br />Scroll to zoom<br /><br />Press
 				<kbd>X</kbd> to stop animation and <kbd>SPACE</kbd> to play again<br /><br />Press
-				<kbd>a</kbd> to increase spreed and <kbd>d</kbd> to decrease spreed<br />
+				<kbd>a</kbd> to increase spreed and <kbd>d</kbd> to decrease spreed<br /><br />
+                Press <kbd>q</kbd> to show grid
 			</p>
 		</div>
 	</body>
@@ -57,6 +58,7 @@
 			0.1,
 			1000
 		);
+        const gridHelper = new THREE.PolarGridHelper( 100, 100, 100, 100 );
 
 		const renderer = new THREE.WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
@@ -117,9 +119,7 @@
 		const controls = new OrbitControls(camera, renderer.domElement);
 		const sun = new THREE.Mesh(sunGeo, sunMat);
 
-		sun.position.y = 0;
-		sun.position.z = 0.2;
-		sun.position.x = 0;
+        sun.position.set(0, 0, 0)
 
 		scene.add(sun, sunLight);
 
@@ -303,7 +303,7 @@
 		window.onhashchange = () => {
 			loadhash();
 		};
-
+        var i = 0;
 		document.querySelector('.speed').innerHTML =
 			Math.round(c * 100) + ` (${15.91 / c / 100} second/Earth year)`;
 		window.addEventListener('keypress', (e) => {
@@ -327,6 +327,14 @@
 					document.querySelector('.speed').innerHTML =
 						Math.round(c * 100) + ` (${15.91 / c / 100} second/Earth year)`;
 					break;
+                case 'q':
+                    if(i === 0) {
+                        scene.add( gridHelper );
+                        i = 1;
+                    } else {
+                        scene.remove( gridHelper );
+                        i = 0;
+                    }
 			}
 		});
 	</script>
